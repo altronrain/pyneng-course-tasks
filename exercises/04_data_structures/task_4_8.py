@@ -24,3 +24,10 @@
 """
 
 ip = "192.168.3.1"
+
+ip_template = "{0:<10}  {1:<10}  {2:<10}  {3:<10}\n{0:08b}  {1:08b}  {2:08b}  {3:08b}"
+
+print(ip_template.format(int(ip.split(".")[0]),
+                  int(ip.split(".")[1]),
+                  int(ip.split(".")[2]),
+                  int(ip.split(".")[3])))
