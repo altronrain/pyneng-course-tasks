@@ -19,3 +19,14 @@ Network:
   для разделения октетов между собой)
 
 """
+
+net = input("Введите IP-сети: ")
+
+octets = net.split('.')
+
+template = "Network:\n{0:<10}{1:<10}{2:<10}{3:<10}\n{0:08b}  {1:08b}  {2:08b}  {3:08b}"
+
+print(template.format(int(octets[0]),
+                      int(octets[1]),
+                      int(octets[2]),
+                      int(octets[3])))

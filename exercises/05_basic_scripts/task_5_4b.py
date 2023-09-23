@@ -46,3 +46,42 @@ bin_ip = "00001010000000010000000111000011"
 в адресе может быть 32 бита, а 32 - 28 = 4)
 00001010000000010000000111000000
 """
+
+ip_and_mask = input("Введите IPv4-адрес и маску подсети: ")
+ip = ip_and_mask.split(' ')[0].split(".")
+mask = ip_and_mask.split(' ')[1].split(".")
+
+#ip = ['10', '1', '1', '195']
+ip_bin_str = (format(int(ip[0]), '08b') + 
+              format(int(ip[1]), '08b') + 
+              format(int(ip[2]), '08b') + 
+              format(int(ip[3]), '08b'))
+#mask = ['255', '255', '255', '240']
+mask_bin_str = (format(int(mask[0]), '08b') + 
+                format(int(mask[1]), '08b') + 
+                format(int(mask[2]), '08b') + 
+                format(int(mask[3]), '08b'))
+
+mask_count = mask_bin_str.count("1")
+
+revert_mask = 32 - mask_count
+net_bin_str = ip_bin_str[:-(revert_mask)] + "0"*revert_mask
+net = [int(net_bin_str[:8], 2),
+       int(net_bin_str[8:16], 2),
+       int(net_bin_str[16:24], 2),
+       int(net_bin_str[24:32], 2),]
+
+
+template = """
+Network:
+{0:<10}{1:<10}{2:<10}{3:<10}
+{0:08b}  {1:08b}  {2:08b}  {3:08b}
+
+Mask:
+/{8:<}
+{4:<10}{5:<10}{6:<10}{7:<10}
+{4:08b}  {5:08b}  {6:08b}  {7:08b}
+"""
+print(template.format(net[0], net[1], net[2], net[3],
+                         int(mask[0]), int(mask[1]), int(mask[2]), int(mask[3]),
+                         mask_count))

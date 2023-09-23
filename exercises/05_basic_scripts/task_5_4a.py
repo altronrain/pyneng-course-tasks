@@ -50,3 +50,29 @@ Mask:
 255       255       255       240
 11111111  11111111  11111111  11110000
 """
+
+net_and_mask = input("Введите IPv4-адрес и маску подсети: ")
+
+net = net_and_mask.split(' ')[0].split(".")
+mask = net_and_mask.split(' ')[1].split(".")
+
+mask_bin_str = (format(int(mask[0]), '08b') + 
+                format(int(mask[1]), '08b') + 
+                format(int(mask[2]), '08b') + 
+                format(int(mask[3]), '08b'))
+
+mask_count = mask_bin_str.count("1")
+
+template = """
+Network:
+{0:<10}{1:<10}{2:<10}{3:<10}
+{0:08b}  {1:08b}  {2:08b}  {3:08b}
+
+Mask:
+/{8:<}
+{4:<10}{5:<10}{6:<10}{7:<10}
+{4:08b}  {5:08b}  {6:08b}  {7:08b}
+"""
+print(template.format(int(net[0]), int(net[1]), int(net[2]), int(net[3]),
+                         int(mask[0]), int(mask[1]), int(mask[2]), int(mask[3]),
+                         mask_count))

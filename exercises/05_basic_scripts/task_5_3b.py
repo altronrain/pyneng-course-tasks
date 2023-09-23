@@ -49,3 +49,10 @@ london_co = {
         "routing": True,
     },
 }
+
+device = input("Введите имя устройства: ")
+param_list = str(tuple(london_co[device].keys())).replace("'", "")
+phrase = "Введите имя параметра " + param_list + ": "
+param = input(phrase)
+
+print(london_co[device][param])

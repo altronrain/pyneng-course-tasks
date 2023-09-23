@@ -24,3 +24,7 @@ Guido===van===Rossum===began===working===on===Python
 Ограничение: нельзя изменять список words.
 """
 words = ['Guido', 'van', 'Rossum', 'began', 'working', 'on', 'Python']
+
+delemeter = input("Введите разделитель строк: ")
+
+print(delemeter.join(words))
