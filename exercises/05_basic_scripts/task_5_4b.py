@@ -52,15 +52,15 @@ ip = ip_and_mask.split(' ')[0].split(".")
 mask = ip_and_mask.split(' ')[1].split(".")
 
 #ip = ['10', '1', '1', '195']
-ip_bin_str = (format(int(ip[0]), '08b') + 
-              format(int(ip[1]), '08b') + 
-              format(int(ip[2]), '08b') + 
-              format(int(ip[3]), '08b'))
+ip_bin_str = "{:08b}{:08b}{:08b}{:08b}".format(int(ip[0]),
+                                              int(ip[1]),
+                                              int(ip[2]),
+                                              int(ip[3]))
 #mask = ['255', '255', '255', '240']
-mask_bin_str = (format(int(mask[0]), '08b') + 
-                format(int(mask[1]), '08b') + 
-                format(int(mask[2]), '08b') + 
-                format(int(mask[3]), '08b'))
+mask_bin_str = "{:08b}{:08b}{:08b}{:08b}".format(int(mask[0]),
+                                              int(mask[1]),
+                                              int(mask[2]),
+                                              int(mask[3]))
 
 mask_count = mask_bin_str.count("1")
 

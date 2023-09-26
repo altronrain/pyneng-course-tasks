@@ -56,10 +56,15 @@ net_and_mask = input("Введите IPv4-адрес и маску подсет�
 net = net_and_mask.split(' ')[0].split(".")
 mask = net_and_mask.split(' ')[1].split(".")
 
-mask_bin_str = (format(int(mask[0]), '08b') + 
-                format(int(mask[1]), '08b') + 
-                format(int(mask[2]), '08b') + 
-                format(int(mask[3]), '08b'))
+mask_bin_str = "{:08b}  {:08b}  {:08b}  {:08b}".format(int(mask[0]),
+                                              int(mask[1]),
+                                              int(mask[2]),
+                                              int(mask[3]))
+
+#mask_bin_str = (format(int(mask[0]), '08b') + 
+#                format(int(mask[1]), '08b') + 
+#                format(int(mask[2]), '08b') + 
+#                format(int(mask[3]), '08b'))
 
 mask_count = mask_bin_str.count("1")
 
