@@ -64,8 +64,7 @@ mask_bin_str = "{:08b}{:08b}{:08b}{:08b}".format(int(mask[0]),
 
 mask_count = mask_bin_str.count("1")
 
-revert_mask = 32 - mask_count
-net_bin_str = ip_bin_str[:-(revert_mask)] + "0"*revert_mask
+net_bin_str = ip_bin_str[:mask_count] + "0" * (32 - mask_count)
 net = [int(net_bin_str[:8], 2),
        int(net_bin_str[8:16], 2),
        int(net_bin_str[16:24], 2),

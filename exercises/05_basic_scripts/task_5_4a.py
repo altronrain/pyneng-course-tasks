@@ -53,8 +53,8 @@ Mask:
 
 net_and_mask = input("Введите IPv4-адрес и маску подсети: ")
 
-net = net_and_mask.split(' ')[0].split(".")
-mask = net_and_mask.split(' ')[1].split(".")
+net = net_and_mask.split()[0].split(".")
+mask = net_and_mask.split()[1].split(".")
 
 mask_bin_str = "{:08b}  {:08b}  {:08b}  {:08b}".format(int(mask[0]),
                                               int(mask[1]),

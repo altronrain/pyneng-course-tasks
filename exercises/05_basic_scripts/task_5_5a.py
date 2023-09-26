@@ -32,5 +32,5 @@ vlans = input(vlans_dict[mode])
 
 switch_dict = { "access" : access_template.format(vlans), "trunk" : trunk_template.format(vlans)}
 
-print("interface",iface)
+print(f"interface {iface}")
 print(switch_dict[mode])
