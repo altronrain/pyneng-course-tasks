@@ -35,3 +35,35 @@ $ python task_6_6b.py
 local broadcast
 
 """
+error = True
+
+while error:
+    ip_addr = input("Введите IP-адрес: ")
+    if ip_addr.count(".") == 3:
+        octets = ip_addr.split(".")
+        for num in octets:
+            if not (num.isdigit() and int(num) in range(0,256)):
+                error = True
+                break
+            else:
+                error = False
+    if error:
+        print("Неправильный IP-адрес")
+
+o1, o2, o3, o4 = [
+    int(octets[0]),
+    int(octets[1]),
+    int(octets[2]),
+    int(octets[3]),
+]
+   
+if o1 == o2 == o3 == o4 == 0:
+    print("unassigned")
+elif o1 == o2 == o3 == o4 == 255:
+    print("local broadcast")
+elif o1 in range(1,224):
+    print("unicast")
+elif o1 in range(224,240):
+    print("multicast")
+else:
+    print("unused")

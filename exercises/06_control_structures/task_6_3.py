@@ -18,3 +18,19 @@ data = ["a", "100", "30", 10.5, 20, "test", "15", 100]
 """
 
 data = ["a", "100", "30", 10.5, 20, "test", "15", 100]
+result = []
+
+#for i in data:
+#    i = str(i)
+#    if i.isdigit():
+#        result.append(int(i))
+        
+#print(result)
+
+for i in data:
+    try:
+        result.append(int(i))
+    except ValueError:
+        pass
+
+print(result)

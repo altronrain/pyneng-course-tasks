@@ -50,3 +50,21 @@ from random import randint
 
 random_number = randint(1, 9)
 # print(random_number)
+
+for attempt in range(0, 5):
+    user_number = input("Введите число: ")
+#    if user_num.isdigit() and int(user_number) in range(1,10):  
+    if int(user_number) > random_number:
+        print("Задуманное число меньше")
+        attempt += 1
+    elif int(user_number) < random_number:
+        print("Задуманное число больше")
+        attempt += 1
+    else:
+        print("Правильно!")
+        break
+#    else:
+#        print("Необходимо ввести число в диапазоне от 1 до 9")        
+    
+else:
+    print("Число не угадано после 5 попыток")

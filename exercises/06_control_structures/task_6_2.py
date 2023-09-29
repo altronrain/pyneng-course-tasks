@@ -15,3 +15,14 @@ GUIdO vAn ROssUm bEgAn wOrkIng On PYthOn In thE lAtE 1980s
 
 line = "Guido van Rossum began working on Python in the late 1980s"
 
+wovels = ['a', 'e', 'i', 'o', 'u', 'y']
+string = []
+
+for i in line:
+    if i in wovels:
+        string.append(i.upper())
+    else:
+        string.append(i)
+        
+result = "".join(string)
+print(result)
