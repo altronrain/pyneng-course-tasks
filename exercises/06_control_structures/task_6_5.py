@@ -51,15 +51,13 @@ from random import randint
 random_number = randint(1, 9)
 # print(random_number)
 
-for attempt in range(0, 5):
+for attempt in range(5):
     user_number = input("Введите число: ")
 #    if user_num.isdigit() and int(user_number) in range(1,10):  
     if int(user_number) > random_number:
         print("Задуманное число меньше")
-        attempt += 1
     elif int(user_number) < random_number:
         print("Задуманное число больше")
-        attempt += 1
     else:
         print("Правильно!")
         break
