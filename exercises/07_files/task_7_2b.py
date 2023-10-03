@@ -15,5 +15,15 @@ $ python task_7_2b.py config_sw1.txt new_config.txt
 При этом, должны быть отфильтрованы строки со словами, которые содержатся в списке ignore
 и строки, которые начинаются на '!'.
 """
-
+import sys
 ignore = ["duplex", "alias", "configuration", "end", "service"]
+
+with open(sys.argv[1]) as src, open(sys.argv[2], "w") as dst:
+    for line in src:
+        word_present = False
+        if not line.startswith("!"):
+            for word in ignore:
+                if word in line:
+                    word_present = True
+            if not word_present:
+                dst.write(line)

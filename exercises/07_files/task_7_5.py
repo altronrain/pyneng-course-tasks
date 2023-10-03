@@ -62,3 +62,27 @@ $ python task_7_5.py config_trunk_sw3.txt
 
 """
 from pprint import pprint
+import sys
+
+interface_dict = {}
+iface_sect = False
+with open(sys.argv[1]) as f:
+    for line in f:
+        if line.startswith("interface"):
+            iface = line.split()[-1]
+            interface_dict[iface] = []
+            iface_sect = True
+        elif line.startswith(" switchport") and iface_sect:
+            interface_dict[iface].append(line.strip())
+        
+#if_d = interface_dict.copy()
+#for iface in if_d:
+#    if not if_d[iface]:
+#        del interface_dict[iface]    
+try:
+    for iface, cmds in interface_dict:
+        pass
+except ValueError:
+    del interface_dict[iface]
+   
+pprint(interface_dict)

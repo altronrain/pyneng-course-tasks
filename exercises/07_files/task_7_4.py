@@ -39,3 +39,17 @@ $ python task_7_4.py config_trunk_sw3.txt
 в режиме trunk, если у него настроена команда switchport trunk allowed vlan.
 """
 from pprint import pprint
+import sys
+
+trunk_dict = {}
+iface_sect = False
+trunk_flag = " switchport trunk allowed vlan"
+with open(sys.argv[1]) as f:
+    for line in f:
+        if line.startswith("interface"):
+            iface = line.split()[-1]
+            iface_sect = True
+        elif trunk_flag in line and iface_sect:
+            trunk_dict[iface] = line.split()[-1].split(",")
+            
+pprint(trunk_dict)

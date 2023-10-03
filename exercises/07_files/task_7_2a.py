@@ -48,5 +48,19 @@ line vty 0 4
 Имя файла передается как аргумент скрипту.
 
 """
-
+import sys
 ignore = ["duplex", "alias", "configuration", "end", "service"]
+#result = []
+with open(sys.argv[1]) as f:
+    for line in f:
+        word_present = False
+        if not line.startswith("!"):
+            for word in ignore:
+                if word in line:
+                    word_present = True
+            if not word_present:
+                print(line, end="")
+                #result.append(line)
+                
+#for item in result:
+#    print(item, end="")
