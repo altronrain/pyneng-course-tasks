@@ -43,7 +43,7 @@ result = []
 with open("CAM_table.txt") as f:
     for line in f:
         words = line.split()
-        if len(words) >= 4 and line[1].isdigit():
+        if len(words) >= 4 and words[0].isdigit():
             result.append([int(words[0]),words[1],words[3]])
 
 for vl, mac, port in sorted(result):

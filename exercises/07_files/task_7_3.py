@@ -17,9 +17,10 @@
 1000     0a4b.c380.7d00      Gi0/9
 
 """
-result = []
+#result = []
 with open("CAM_table.txt") as f:
     for line in f:
         words = line.split()
-        if len(words) >= 4 and line[1].isdigit():
+        #if len(words) >= 4 and line[1].isdigit():
+        if len(words) >=4 and words[0].isdigit():
             print(f"{words[0]:9}{words[1]:20}{words[3]}")
