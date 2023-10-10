@@ -36,5 +36,16 @@ aa:aa:bb:bb:cc:cc
 дополнительные функции.
 """
 
+def convert_mac(hwaddr):
+   new_hwaddr = ""
+   hwaddr = hwaddr.replace(".","")
+   for i in range(len(hwaddr)):
+      if i > 0 and i % 2 == 0:
+         new_hwaddr = new_hwaddr + ":"
+      new_hwaddr = new_hwaddr + hwaddr[i]
+   return new_hwaddr
+
 mac_list = ["1a1b.2c2d.3e3f", "aaaa.bbbb.cccc", "1111.2222.3333"]
 
+for m in mac_list:
+   print(convert_mac(m))

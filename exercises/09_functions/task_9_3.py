@@ -78,6 +78,22 @@ Out[8]:
 В заданиях 9го раздела и дальше, кроме указанной функции можно создавать любые
 дополнительные функции.
 """
+from pprint import pprint
+import os
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/09_functions"
+
+def clean_config(config_filename, ignore_lines):
+    config_cmds_list = []
+    with open(os.path.join(PATH, config_filename)) as f:
+        for line in f:
+            good_line = not line.startswith("!") == True
+            for i in ignore_lines:
+                good_line = i not in line and good_line
+            if good_line:
+                config_cmds_list.append(line.strip("\n"))
+        return config_cmds_list  
 
 ignore_list = ["duplex", "alias exec", "Current configuration", "service"]
 
+pprint(clean_config("config_r2_short.txt", ignore_list))

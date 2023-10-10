@@ -48,5 +48,23 @@ False
 В заданиях 9го раздела и дальше, кроме указанной функции можно создавать любые
 дополнительные функции.
 """
+def check_ip(ip_addr):
+    if type(ip_addr) == str and ip_addr.count(".") != 3:
+        return False
+    else:
+        octets = ip_addr.split(".")
+        valid_ip = True
+        for i in octets:
+            valid_ip = i.isdigit() and 0 <= int(i) <= 255 and valid_ip
+        if valid_ip:
+            return True
+        else:
+            return False
+            
+
+
 
 ip_list = ["10.1.1.1", "10.3.a.a", "500.1.1.1", "150.168.100.1", "62.150.240.300"]
+
+for ip in ip_list:
+    print(check_ip(ip))
