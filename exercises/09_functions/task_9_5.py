@@ -59,6 +59,31 @@ Out[9]:
 В заданиях 9го раздела и дальше, кроме указанной функции можно создавать любые
 дополнительные функции.
 """
+from pprint import pprint
+
+def generate_trunk_config(intf_vlan_dict, trunk_template):
+    """
+    Функция генерирует конфигурацию для настройки trunk-портов
+
+    Params:
+        intf_vlan_dict (dict): Словарь соответствия "интерфейс"-"vlans"
+        trunk_template (list): Список команд для настройки интерфейса
+
+    Returns:
+        list: Список команд для trunk-портов
+    """
+    trunk_config = []
+    for intf, vlans_list in intf_vlan_dict.items():
+        trunk_config.append(f"interface {intf}")
+        # Преобразование списка vlans к нужному виду:    
+        vlans = str(vlans_list).strip("[]").replace(" ","")
+        for command in trunk_template:
+            if command.endswith("allowed vlan"):
+                trunk_config.append(f"{command} {vlans}")
+            else:
+                trunk_config.append(command)
+    return trunk_config          
+                
 
 trunk_cmd_list = [
     "switchport mode trunk",
@@ -77,3 +102,6 @@ trunk_dict_2 = {
     "FastEthernet0/15": [111, 130],
     "FastEthernet0/14": [117],
 }
+
+pprint(generate_trunk_config(trunk_dict, trunk_cmd_list))
+pprint(generate_trunk_config(trunk_dict_2, trunk_cmd_list))

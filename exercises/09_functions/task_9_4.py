@@ -64,6 +64,31 @@ Out[6]:
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 """
+from pprint import pprint
+
+def generate_access_config(intf_vlan_dict, access_template):
+    """
+    Функция генерирует конфигурацию для настройки access-портов 
+
+    Args:
+        intf_vlan_dict (dict): Словарь соответствия "интерфейс"-"vlan"
+        access_template (list): Список команд для настройки интерфейса
+
+    Returns:
+        list: Список команд для access-портов
+    """
+    access_config = []
+    for intf, vlan in intf_vlan_dict.items():
+        access_config.append(f"interface {intf}")
+        for command in access_template:
+            if command.endswith("access vlan"):
+                access_config.append(f"{command} {vlan}")
+            else:
+                access_config.append(command)
+    return access_config
+
+
+
 access_dict = {"FastEthernet0/12": 10, "FastEthernet0/14": 11}
 access_dict_2 = {
     "FastEthernet0/3": 100,
@@ -80,3 +105,6 @@ access_cmd_list = [
     "spanning-tree bpduguard enable",
 ]
 cmd_list = ["switchport mode access", "switchport access vlan"]
+
+pprint(generate_access_config(access_dict, cmd_list))
+pprint(generate_access_config(access_dict_2, access_cmd_list))

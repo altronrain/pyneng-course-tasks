@@ -37,15 +37,24 @@ aa:aa:bb:bb:cc:cc
 """
 
 def convert_mac(hwaddr):
-   new_hwaddr = ""
-   hwaddr = hwaddr.replace(".","")
-   for i in range(len(hwaddr)):
-      if i > 0 and i % 2 == 0:
-         new_hwaddr = new_hwaddr + ":"
-      new_hwaddr = new_hwaddr + hwaddr[i]
-   return new_hwaddr
+    """
+    Функция производит преобразование представления MAC-адресов.
+
+    Args:
+        hwaddr (str): MAC-адрес вида "aaaa.bbbb.cccc"
+
+    Returns:
+        str: MAC-адрес вида "aa:aa:bb:bb:cc:cc"
+    """
+    new_hwaddr = ""
+    hwaddr = hwaddr.replace(".","")
+    for i in range(len(hwaddr)):
+        if i > 0 and i % 2 == 0:
+            new_hwaddr = new_hwaddr + ":"
+        new_hwaddr = new_hwaddr + hwaddr[i]
+    return new_hwaddr
 
 mac_list = ["1a1b.2c2d.3e3f", "aaaa.bbbb.cccc", "1111.2222.3333"]
 
 for m in mac_list:
-   print(convert_mac(m))
+    print(convert_mac(m))

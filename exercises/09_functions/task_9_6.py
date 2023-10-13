@@ -44,3 +44,37 @@ Out[5]:
 В заданиях 9го раздела и дальше, кроме указанной функции можно создавать любые
 дополнительные функции.
 """
+from pprint import pprint
+import os
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/09_functions"
+
+def get_int_vlan_map(config_filename):
+    """
+    Функция формирует два словаря на основе файла конфигурации.
+    Словари содержат информацию вида "интерфейс"-"vlan(-s)"
+    Один словарь для access портов. Vlan для него представляет собой число.
+    Второй словарь для trunk портов. Vlans для него представляет собой список.
+
+    Params:
+        config_file (str): Файл конфигурации
+
+    Returns:
+        tuple: Кортеж из двух словарей для разных типов интерфейсов
+    """
+    access_intf_vlan_dict = {}
+    trunk_intf_vlan_dict = {}
+    with open(os.path.join(PATH, config_filename)) as f:
+        for line in f:
+            if "Ethernet" in line:
+                intf = line.split()[-1]
+            if "access vlan" in line:
+                access_intf_vlan_dict[intf] = int(line.split()[-1])
+            elif "allowed vlan" in line:
+                trunk_intf_vlan_dict[intf] = []
+                for vl in line.split()[-1].split(","):
+                    trunk_intf_vlan_dict[intf].append(int(vl))
+    
+    return access_intf_vlan_dict, trunk_intf_vlan_dict
+
+pprint(get_int_vlan_map("config_sw1.txt"))

@@ -60,8 +60,11 @@ def check_ip(ip_addr):
             return True
         else:
             return False
-            
 
+# Вариант лучше:
+#        for octet in octets:
+#            if not (octet.isdigit() and int(octet) in range(256)):
+#                return False
 
 
 ip_list = ["10.1.1.1", "10.3.a.a", "500.1.1.1", "150.168.100.1", "62.150.240.300"]
