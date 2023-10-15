@@ -76,4 +76,85 @@ In [4]: pprint(convert_config_to_dict("config_sw1.txt", ignore), sort_dicts=Fals
 В заданиях 9го раздела и дальше, кроме указанной функции можно создавать любые
 дополнительные функции.
 """
+from pprint import pprint
+import os
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/09_functions"
+
+# Вариант 1:
+def ignore_line(line, ignore_lines):
+    """
+    Функция поиска игнорируемых слов из списка в составе строки.
+    Если слов в строке не обнаружено - возвращаем False;
+    Если при переборе слово найдено - возвращаем True.
+
+    Params:
+        line (str): Строка исходного файла конфигурации
+        ignore_lines (list): Список игнорируемых слов 
+
+    Returns:
+        bool: Возвращает результат обнаружения игнорируемых слов в строке файла конффигурации
+    """
+    for ignore in ignore_lines:
+        if ignore in line:
+            return True
+    return False
+
+
+def convert_config_to_dict(config_filename, ignore_lines):
+    """
+    Функция возвращает словарь на основе файла конфигурации.
+    Команды верхнего уровня преобразуются в ключи.
+    Подкоманды преобразуются в значение ключа (в виде списка)
+
+    Params:
+        config_file (str): Файл конфигурации
+        ignore_lines (list): Список игнорируемых слов
+
+    Returns:
+        dict: Словарь на основе файла конфигурации
+    """
+    config_dict = {}
+    with open(os.path.join(PATH, config_filename)) as f:
+        for line in f:
+            if not line.startswith("!") and line != "\n":
+                if not ignore_line(line, ignore_lines):
+                    if not line.startswith(" "):
+                        conf_block = line.strip()
+                        config_dict[conf_block] = []
+                    else:
+                        config_dict[conf_block].append(line.strip())
+        return config_dict
+
+# Вариант 2 (в одну функцию):
+# def convert_config_to_dict(config_filename, ignore_lines):
+#     """
+#     Функция возвращает словарь на основе файла конфигурации.
+#     Команды верхнего уровня преобразуются в ключи.
+#     Подкоманды преобразуются в значение ключа (в виде списка)
+
+#     Params:
+#         config_file (str): Файл конфигурации
+#         ignore_lines (list): Список игнорируемых слов
+
+#     Returns:
+#         dict: Словарь на основе файла конфигурации
+#     """
+#     config_dict = {}
+#     with open(os.path.join(PATH, config_filename)) as f:
+#         for line in f:
+#             if not line.startswith("!") and line != "\n"
+#                 good_line = True
+#                 for item in ignore_lines:
+#                     good_line = item not in line and good_line
+#                 if good_line and not line.startswith(" "):
+#                     conf_block = line.strip()
+#                     config_dict[conf_block] = []
+#                 elif good_line:
+#                     config_dict[conf_block].append(line.strip())
+#     return config_dict
+
+
 ignore = ["duplex", "alias", "configuration"]
+
+pprint(convert_config_to_dict("config_sw1.txt", ignore), sort_dicts=False)
