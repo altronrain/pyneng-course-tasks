@@ -62,6 +62,31 @@ ValueError: '1111-2222-33WW' does not appear to be a MAC address
 
 """
 
+def convert_mac(mac):
+    """
+    Функция производит преобразование представления MAC-адресов.
+
+    Args:
+        hwaddr (str): MAC-адрес вида "aaaa.bbbb.cccc"
+
+    Returns:
+        str: MAC-адрес вида "aa:aa:bb:bb:cc:cc"
+    """
+    check_str = set("0123456789abcdf")
+    
+    if not mac[4].isalpha(): # mac[4] -- possible delimeter
+        tmp_mac = mac.replace(mac[4],"") 
+    bad_mac = set(tmp_mac).difference(check_str)
+    if len(mac) != 12 or bad_mac:
+        raise ValueError(f"{mac} does not appear to be a MAC address")
+    else:
+        for i in range(len(tmp_mac)):
+            if i > 0 and i % 2 == 0:
+                new_mac = new_mac + ":"
+            new_mac = new_mac + mac[i]
+    return new_mac
+
+
 correct_mac_example = [
     "111122223333",
     "1a1b.2c2d.3e3f",
