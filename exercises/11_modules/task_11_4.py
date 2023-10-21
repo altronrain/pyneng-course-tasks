@@ -44,9 +44,28 @@ In [4]: pprint(create_network_map(["sh_cdp_n_sw1.txt", "sh_cdp_n_r1.txt"]), sort
  ('R1', 'Eth0/0'): ('SW1', 'Eth0/1')}
 
 """
+from pprint import pprint
+import os
+
+from task_11_3 import parse_cdp_neighbors
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/11_modules"
+
+def create_network_map(filenames):
+    topology = {}
+    for file in filenames:
+        with open(os.path.join(PATH, file)) as f:
+                topology.update(parse_cdp_neighbors(f.read()))
+    return topology
+                
+
 infiles = [
     "sh_cdp_n_sw1.txt",
     "sh_cdp_n_r1.txt",
     "sh_cdp_n_r2.txt",
     "sh_cdp_n_r3.txt",
 ]
+
+if __name__ == "__main__":
+    pprint(create_network_map(infiles), sort_dicts=False)
+    pprint(create_network_map(["sh_cdp_n_sw1.txt", "sh_cdp_n_r1.txt"]), sort_dicts=False)

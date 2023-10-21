@@ -38,3 +38,28 @@ Input In [11], in <cell line: 1>()
 ...
 ValueError: '1111WWWW3333' does not appear to be a MAC address
 """
+from task_11_1 import convert_mac
+
+def convert_mac_list(mac_list, strict=False):
+    """
+    Функция обрабатывает список MAC-адресов, преобразуя их к виду 'aa:bb:cc:11:22:33'
+
+    Params:
+        mac_list (list): Список MAC-адресов для обрабротки
+        strict (bool): Режим обработки:
+                True -- вызывать ошибку при обнаружении некорректного MAC-адреса;
+                False -- игнорировать некорректный MAC-адрес.  
+
+    Returns:
+        list: Список MAC-адресов в новом предствалении
+    """
+    new_mac_list = []
+    for mac_addr in mac_list:
+        try:
+            convert_mac(mac_addr)
+        except ValueError:
+            if strict:
+                raise
+        else:
+            new_mac_list.append(convert_mac(mac_addr))
+    return new_mac_list    

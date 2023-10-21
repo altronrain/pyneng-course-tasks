@@ -84,6 +84,41 @@ In [7]: pprint(unique_network_map(input_topology))
  ('R2', 'Eth0/1'): ('SW2', 'Eth0/11')}
 
 """
+import os
+
+from task_11_4 import create_network_map
+from draw_network_graph import draw_topology
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/11_modules"
+
+def unique_network_map(topology_dict):
+    """
+    Функция обрабатывает полную топологию сети, собранную с нескольких устройств.
+    Записи, представляющие собой идентичные связи, усекаются.
+    (Остается лишь одна подобная запись для корректного составления схемы сети) 
+
+    Params:
+        input_topology (dict): Словарь, содержащий топологию сети с ряда устройств
+
+    Returns:
+        dict: Словарь топологии сети, содержащий только уникальные связи.
+    """
+    unique_topology_dict = {}
+    for key, value in topology_dict.items():
+        """
+        Исходный словарь распаковывается построчно. 
+        Далее производится проверка наличия в формируемом словаре
+        ключа, являющегося значением (value) разбираемого словаря.
+        Если такого ключа в итоговом словаре еще нет, то необходимо
+        обработать исключение (добавить строку исходного словаря в новый).
+        Если такой ключ уже имеется, то строку следует игнорировать.
+        """
+        try:
+            unique_topology_dict[value]
+        except KeyError:
+            unique_topology_dict[key] = value
+    return unique_topology_dict
+    
 
 infiles = [
     "sh_cdp_n_sw1.txt",
@@ -91,3 +126,10 @@ infiles = [
     "sh_cdp_n_r2.txt",
     "sh_cdp_n_r3.txt",
 ]
+
+
+if __name__ == "__main__":
+    filename = os.path.join(PATH, "topology")
+    draw_topology(unique_network_map(create_network_map(infiles)), output_filename=filename)
+#    pprint(unique_network_map(create_network_map(infiles)))    
+    

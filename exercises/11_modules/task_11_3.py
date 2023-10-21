@@ -58,6 +58,9 @@ In [6]: with open("sh_cdp_n_r3.txt") as f:
  ('R3', 'Eth0/2'): ('R5', 'Eth0/0')}
 
 """
+import os
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/11_modules"
 
 def parse_cdp_neighbors(command_output):
     """
@@ -67,8 +70,21 @@ def parse_cdp_neighbors(command_output):
     и с файлами и с выводом с оборудования.
     Плюс учимся работать с таким выводом.
     """
-
+#    local_map = []
+#    remote_dev = {}
+    port_map_dict = {}
+    rows = command_output.split("\n")
+    for row in rows:
+        if "show cdp neighbors" in row:
+            local_host = row.split(">")[0]
+        if "Eth" in row:
+            remote_host, _, local_p, *_, remote_p = row.split()
+            local_map = tuple([local_host, "Eth" + local_p])
+            remote_map = tuple([remote_host, "Eth" + remote_p])
+            port_map_dict[local_map] = remote_map
+    return port_map_dict
+  
 
 if __name__ == "__main__":
-    with open("sh_cdp_n_sw1.txt") as f:
+    with open(os.path.join(PATH, "sh_cdp_n_r3.txt")) as f:
         print(parse_cdp_neighbors(f.read()))

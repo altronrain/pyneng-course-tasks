@@ -67,3 +67,55 @@ ValueError                                Traceback (most recent call last)
 ValueError: После 3 попыток не был введен правильный адрес
 
 """
+
+def check_ip(ip_addr):
+    """
+    Функция производит валидацию IPv4-адреса
+
+    Params:
+        ip_addr (str): Строка, предствляющая собой IPv4 адрес
+
+    Returns:
+        bool: Результат проверки IPv4-адреса на корректность
+    """
+    octets = ip_addr.split(".")
+
+    if len(octets) != 4:
+        return False
+    else:
+        for octet in octets:
+            if not (octet.isdigit() and int(octet) in range(256)):
+                return False
+    return True
+
+def prompt_user_ip(*, max_retry, ensure_unicast):
+    """
+    Функция запрашивает у пользователя ввод IPv4-адреса.
+    Затем адрес проверяется на корректность ввода.
+    В случае несоответствия адреса заданным параметрам процесс повторяется.
+    При вводе корректного IPv4-адреса он выводится на экран и работа завершается.
+
+    Params:
+        max_retry (int): Максимальное количество попыток ввода
+        ensure_unicast (bool): Требование соответствия unicast адресам
+
+    Raises:
+        ValueError: В случае исчерпания попыток ввода выводится сообщение об ошибке.
+    """
+    for attempt in range(1, max_retry+1):
+        ip = input("Введите правильный IP-адрес: ")
+        if not check_ip(ip):
+            print("Неправильный IP-адрес")
+            continue
+        elif ensure_unicast == True:
+            octet1, *_ = ip.split(".")
+            if int(octet1) in range(1,224):
+                return ip
+            else:
+                print("Введите IP-адрес в диапазоне unicast: 1-223")
+                continue
+        else:
+            return ip
+            
+    if attempt == max_retry:
+        raise ValueError(f"После {attempt} попыток не был введен правильный адрес")    
