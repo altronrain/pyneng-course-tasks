@@ -50,3 +50,61 @@ Out[4]:
  '10.1.1.4']
 
 """
+from ipaddress import ip_address
+
+# Вариант 1 (без ipaddress)
+def convert_ranges_to_ip_list(ip_list):
+    """
+    Функция обрабатывает полученный список IP-адресов.
+    Указания IP-адресов в виде диапазонов преобразуются к полному списку IP-адресов. 
+    
+    Params:
+        ip_list (list): Список IP-адресов для обработки
+
+    Returns:
+        list: Полный список IP-адресов без диапазонов
+    """
+    list_of_ip = []
+    for item in ip_list:
+        if "-" not in item:
+            list_of_ip.append(item)
+        else:
+            ip_start, ip_end = item.split("-")
+            ip_s_oct123 = ".".join(ip_start.split(".")[0:3]) 
+            ip_s_oct4 = ip_start.split(".")[3]
+            ip_e_oct4 = ip_end.split(".")[3] if "." in ip_end else ip_end
+            for last_oct in range(int(ip_s_oct4), int(ip_e_oct4) + 1):
+                list_of_ip.append(f"{ip_s_oct123}.{last_oct}")
+    return list_of_ip
+
+# Вариант 2 (с ipaddress)
+def convert_ranges_to_ip_list(ip_list):
+    """
+    Функция обрабатывает полученный список IP-адресов.
+    Указания IP-адресов в виде диапазонов преобразуются к полному списку IP-адресов. 
+    
+    Params:
+        ip_list (list): Список IP-адресов для обработки
+
+    Returns:
+        list: Полный список IP-адресов без диапазонов
+    """
+    list_of_ip = []
+    for item in ip_list:
+        if "-" not in item:
+            list_of_ip.append(item)
+        else:
+            ip_start, ip_end = item.split("-")
+            if "." in ip_end:
+                inc = int(ip_address(ip_end)) - int(ip_address(ip_start))
+            else:
+                inc = int(ip_end) - int(ip_start.split(".")[3])
+            ip_start = ip_address(ip_start)
+            for _ in range(inc + 1):
+                list_of_ip.append(str(ip_start))
+                ip_start += 1
+    return list_of_ip
+
+
+if __name__ == "__main__":
+    convert_ranges_to_ip_list(['8.8.4.4', '1.1.1.10-12', '10.1.1.1-10.1.1.4'])
