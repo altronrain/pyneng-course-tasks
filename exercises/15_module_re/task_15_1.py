@@ -29,3 +29,23 @@ Out[10]:
  ('10.0.19.1', '255.255.255.0')]
 
 """
+import re
+import os
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/15_module_re"
+
+def get_ip_from_cfg(filename):
+    ip_mask_list = []
+    regex = r"address ([0-9.]+) ([0-9.]+)"
+    with open(os.path.join(PATH, filename)) as f:
+        output = f.read()
+    
+    rmatch = re.finditer(regex, output)
+    for m in rmatch:
+        ip_mask_list.append(m.groups())
+    
+    return ip_mask_list
+
+if __name__ == "__main__":
+    print(get_ip_from_cfg("config_r1.txt"))
+    

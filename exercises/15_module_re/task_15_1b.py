@@ -38,3 +38,27 @@ In [8]: pprint(get_ip_from_cfg("config_r2.txt"), sort_dicts=False)
  'Ethernet0/2': [('10.0.29.2', '255.255.255.0')]}
 
 """
+import re
+import os
+from pprint import pprint
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/15_module_re"
+
+# search
+def get_ip_from_cfg(filename):
+    intf_dict = {}
+    regex = r"^interface (\S+)|^ ip address ([0-9.]+) ([0-9.]+)"
+    with open(os.path.join(PATH, filename)) as f:
+        for line in f:
+            rmatch = re.search(regex, line)
+            if rmatch:
+                if rmatch.lastindex == 1:
+                    intf = rmatch.group(1)
+                    ip_mask_list = []
+                else:
+                    ip_mask_list.append(rmatch.groups()[1:])
+                    intf_dict[intf] = ip_mask_list
+    return intf_dict
+
+if __name__ == "__main__":
+    pprint(get_ip_from_cfg("config_r2.txt"))
