@@ -39,6 +39,18 @@ PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/15_module_re"
 
 # finditer
 def get_ip_from_cfg(filename):
+    """Функция обрабатывает переданный ей конфигурационный файл
+    и формирует словарь с ключами в виде имен интерфейсов.
+    Значения представляют собой кортежи из IP-адресов и масок, присутствующих
+    на интерфейсах, описанных в файле конфигурации.
+
+    Params:
+        filename (str): Имя файла конфигурации для дальнейшей обработки
+
+    Returns:
+        dict: Словарь, содержащий сведения об адресации на интерфейсах
+        Формат словаря: { 'Interface':('IP-address', 'Netmask'), ...} 
+    """
     intf_dict = {}
     regex = r"interface (\S+).+? ip address ([0-9.]+) ([0-9.]+)"
     with open(os.path.join(PATH, filename)) as f:
@@ -55,6 +67,18 @@ def get_ip_from_cfg(filename):
 
 # search
 def get_ip_from_cfg(filename):
+    """Функция обрабатывает переданный ей конфигурационный файл
+    и формирует словарь с ключами в виде имен интерфейсов.
+    Значения представляют собой кортежи из IP-адресов и масок, присутствующих
+    на интерфейсах, описанных в файле конфигурации.
+
+    Params:
+        filename (str): Имя файла конфигурации для дальнейшей обработки
+
+    Returns:
+        dict: Словарь, содержащий сведения об адресации на интерфейсах
+        Формат словаря: { 'Interface':('IP-address', 'Netmask'), ...} 
+    """
     intf_dict = {}
     regex = r"^interface (\S+)|^ ip address ([0-9.]+) ([0-9.]+)"
     with open(os.path.join(PATH, filename)) as f:

@@ -32,3 +32,50 @@ object network LOCAL_10.1.9.5
 
 Во всех правилах для ASA интерфейсы будут одинаковыми (inside,outside).
 """
+import re
+import os
+from pprint import pprint
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/15_module_re"
+
+def make_asa_nat_conf(params, filename):
+    """Функция принимает набор параметров, необходимых для составления правил NAT,
+    формирует эти правила и осуществляет запись в результирующий файл.
+
+    Params:
+        params (list): Список необходимых параметров для формирования правил NAT
+        filename (str): Имя результирующего файла конфигурации
+    """
+    with open(os.path.join(PATH, filename), "w") as f:
+        for mode, proto, ip, s_port, d_port in params:
+            line = (
+                f"object network LOCAL_{ip}\n"
+                f" host {ip}\n"
+                f" nat (inside,outside) {mode} interface service {proto} {s_port} {d_port}\n"
+            )
+            f.write(line)
+
+
+def convert_ios_nat_to_asa(ios_nat_conf, asa_nat_conf):
+    """Функция обрабатывает правила NAT в стиле Cisco IOS из файла
+    и записывает правила NAT в стиле Cisco ASA в отдельный файл. 
+
+    Params:
+        ios_nat_conf (str): Имя файла конфигурации, из которого берем правила NAT
+        asa_nat_conf (str): Имя файла конфигурации, в который записываем правила NAT
+    """
+    nat_rule_info = []
+    regex = r"^(?:\w+ ){4}(\w+) (\w+) ([0-9.]+) (\d+) (?:\S+ ){2}(\d+)"
+    with open(os.path.join(PATH, ios_nat_conf)) as f:
+        output = f.read()
+    
+    rmatch = re.finditer(regex, output, re.MULTILINE)
+    for m in rmatch:
+        #print(m.groups())
+        nat_rule_info.append(m.groups())
+    
+    make_asa_nat_conf(nat_rule_info, asa_nat_conf)     
+    
+
+if __name__ == "__main__":
+    convert_ios_nat_to_asa("cisco_nat_config.txt" , "asa_nat_config.txt")

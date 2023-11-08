@@ -39,3 +39,35 @@ Out[13]:
  ('Loopback0', '10.2.2.2', 'up', 'up')]
 
 """
+import re
+import os
+from pprint import pprint
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/15_module_re"
+
+def parse_sh_ip_int_br(filename):
+    """Функция обрабатывает переданный ей файл с выводом команды
+    и формирует список с информацией о состоянии интерфейсов.
+    Значения представляют собой список кортежей.
+
+    Params:
+        filename (str): Имя файла для дальнейшей обработки
+
+    Returns:
+        list: Список, содержащий сведения о состоянии интерфейсов
+        Формат списка: [('Interface', 'IP', 'Status', 'Protocol'), ...]  
+    """
+    intf_info = []
+    regex = r"^(\S+) +([0-9.]+|unassigned) +\w+ \w+ +(\w+ ?\w+) +(\w+)"
+    with open(os.path.join(PATH, filename)) as f:
+        output = f.read()
+    
+    rmatch = re.finditer(regex, output, re.MULTILINE)
+    for m in rmatch:
+        #print(m.groups())
+        intf_info.append(m.groups())
+    
+    return intf_info
+
+if __name__ == "__main__":
+    pprint(parse_sh_ip_int_br("sh_ip_int_br_2.txt"))        

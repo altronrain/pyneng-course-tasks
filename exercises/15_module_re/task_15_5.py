@@ -34,3 +34,36 @@ Out[17]:
  'Eth 0/5': 'description Connected to R6 port Eth 0/1'}
 
 """
+import re
+import os
+from pprint import pprint
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/15_module_re"
+
+def generate_description_from_cdp(filename):
+    """Функция обрабатывает файл, содержащий вывод команды show cdp neighbors.
+    На основе информации из данного файла формируется описание для интерфейсов
+    в конфигурации. Данные описания возвращаются в виде словаря.
+
+    Params:
+        filename (str): Имя файла для обработки
+
+    Returns:
+        dict: Словарь, содержащий описание для интерфейсов конфигурации.
+        Формат словаря: {'Interface': 'Description', ...}
+    """
+    intf_descr_dict = {}
+    regex = r"^(?P<device>\w+) +(?P<l_port>\w+ \S+).+?(?P<r_port>\w+ \S+)$"
+    with open(os.path.join(PATH, filename)) as f:
+        output = f.read()
+        
+    rmatch = re.finditer(regex, output, re.MULTILINE)
+    for m in rmatch:
+        #print(m.groups())
+        device, l_port, r_port = m.groups()
+        intf_descr_dict[l_port] = f"description Connected to {device} port {r_port}"
+    return intf_descr_dict
+
+
+if __name__ == "__main__":
+    pprint(generate_description_from_cdp("sh_cdp_n_sw1.txt"))
