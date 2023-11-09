@@ -53,7 +53,7 @@ def generate_description_from_cdp(filename):
         Формат словаря: {'Interface': 'Description', ...}
     """
     intf_descr_dict = {}
-    regex = r"^(?P<device>\w+) +(?P<l_port>\w+ \S+).+?(?P<r_port>\w+ \S+)$"
+    regex = r"^(\w+) +(\w+ \S+).+?(\w+ \S+)$"
     with open(os.path.join(PATH, filename)) as f:
         output = f.read()
         
