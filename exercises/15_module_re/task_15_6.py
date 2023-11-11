@@ -63,3 +63,38 @@ Input In [7], in <cell line: 1>()
 ...
 ValueError: '1111-2222-33WW' does not appear to be a MAC address
 """
+import re
+import os
+from pprint import pprint
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/15_module_re"
+
+def convert_mac(mac):
+    """
+    Функция производит преобразование представления MAC-адресов.
+
+    Params:
+        mac (str): Передаваемый MAC-адрес
+
+    Returns:
+        str: MAC-адрес вида "aa:aa:bb:bb:cc:cc"
+    """
+    #regex = r"(([a-fA-F0-9]{2})([:.-]?)){6}"
+    """ RE работает, но в случае его применения у нас не получится
+    на лету собрать новый MAC. Придется прибегать к методам строк и т.д."""
+    regex = (
+        r"([a-fA-F0-9]{2})[:.-]?([a-fA-F0-9]{2})[:.-]?"
+        r"([a-fA-F0-9]{2})[:.-]?([a-fA-F0-9]{2})[:.-]?"
+        r"([a-fA-F0-9]{2})[:.-]?([a-fA-F0-9]{2})"
+    )
+    rmatch = re.fullmatch(regex, mac)
+    if rmatch:
+        print(rmatch.groups())
+        new_mac = (":").join(rmatch.groups())
+    else:
+        raise ValueError(f"{mac} does not appear to be a MAC address")
+    return new_mac
+
+
+if __name__ == "__main__":
+    pprint(convert_mac("1a1b2c2d3e3f"))
