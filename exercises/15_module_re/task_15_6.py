@@ -90,7 +90,7 @@ def convert_mac(mac):
     rmatch = re.fullmatch(regex, mac)
     if rmatch:
         #print(rmatch.groups())
-        new_mac = (":").join(rmatch.groups()).lower()
+        new_mac = (":").join(rmatch.groups())
     else:
         raise ValueError(f"{mac} does not appear to be a MAC address")
     return new_mac
