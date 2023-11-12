@@ -89,6 +89,8 @@ def get_ip_from_cfg(filename):
                 if rmatch.lastindex == 1:
                     intf = rmatch.group(1)
                 else:
+                    # Из ответов более правильный вариант:
+                    # intf_dict[intf] = rmatch.group(2, 3)
                     intf_dict[intf] = rmatch.groups()[1:]
     return intf_dict
 

@@ -68,6 +68,8 @@ def get_ip_from_cfg(filename):
                     intf = rmatch.group(1)
                     ip_mask_list = []
                 else:
+                    # Из ответов более правильный вариант:
+                    # ip_mask_list.append(rmatch.group(2, 3))
                     ip_mask_list.append(rmatch.groups()[1:])
                     intf_dict[intf] = ip_mask_list
     return intf_dict
