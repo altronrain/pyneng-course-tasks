@@ -89,12 +89,12 @@ def convert_mac(mac):
     )
     rmatch = re.fullmatch(regex, mac)
     if rmatch:
-        print(rmatch.groups())
-        new_mac = (":").join(rmatch.groups())
+        #print(rmatch.groups())
+        new_mac = (":").join(rmatch.groups()).lower()
     else:
         raise ValueError(f"{mac} does not appear to be a MAC address")
     return new_mac
 
 
 if __name__ == "__main__":
-    pprint(convert_mac("1a1b2c2d3e3f"))
+    pprint(convert_mac("1A1B.2C2D.3E3F"))
