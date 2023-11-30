@@ -44,8 +44,38 @@
 """
 
 import glob
+import csv
+import re
+import os
 
-sh_version_files = glob.glob("sh_vers*")
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/17_serialization"
+
+sh_version_files = glob.glob("sh_vers*", root_dir=PATH)
 # print(sh_version_files)
 
-headers = ["hostname", "ios", "image", "uptime"]
+def parse_sh_version(data):
+    regex = r"Version (?P<ver>\S+?),.+uptime is (?P<upt>.+?)\n.+?\"(?P<img>.+?)\""
+    rmatch = re.finditer(regex, data, re.DOTALL)
+    for m in rmatch:
+        return m.group("ver", "img", "upt")
+    
+def write_inventory_to_csv(data_filenames, csv_filename):
+    headers_flag = False
+    headers = ["hostname", "ios", "image", "uptime"]
+    for file in data_filenames:
+        hostname = file.split("_")[2][:-4]
+        with open(os.path.join(PATH, file)) as f:
+            items = [ hostname, *parse_sh_version(f.read()) ]
+        with open(os.path.join(PATH, csv_filename), mode="a") as of:
+            wr = csv.writer(of)
+            if not headers_flag:
+                wr.writerow(headers)
+                headers_flag = True
+            wr.writerow(items)
+    
+
+if __name__ == "__main__":
+    write_inventory_to_csv(sh_version_files, "routers_inventory.csv")
+    
+
+
