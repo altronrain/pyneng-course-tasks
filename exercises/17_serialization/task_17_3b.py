@@ -46,3 +46,41 @@ draw_network_graph.py).
 > pip install graphviz
 
 """
+import os
+import yaml
+from pprint import pprint
+from draw_network_graph import draw_topology
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/17_serialization"
+
+def transform_topology(yaml_file):
+    """Функция обрабатывает файл топологии сети в формате YAML.
+    Полученный словарь словарей преобразовывается к новому виду.
+    Убираются дублирующие связи(записи) в карте топологии сети.
+    На выход отдается словарь вида:
+    {(local_host, local_port): (remote_host, remote_port)}
+
+    Args:
+        yaml_file (str): Имя YAML файла с топологией сети
+
+    Returns:
+        dict: Файл топологии сети в новом формате
+    """
+    with open(os.path.join(PATH, yaml_file)) as f:
+        data = yaml.safe_load(f)      
+    
+    new_dict = {}
+    for l_host, l_port_data in data.items():
+        for l_port, r_host_data in l_port_data.items():
+            for r_host, r_port in r_host_data.items():
+                try:
+                    new_dict[(r_host, r_port)]
+                except KeyError:
+                    new_dict[(l_host, l_port)] = (r_host, r_port)
+    # pprint(new_dict)
+    return new_dict
+    
+    
+if __name__ == "__main__":
+    draw_topology(transform_topology("topology.yaml"))
+    # transform_topology("topology.yaml")

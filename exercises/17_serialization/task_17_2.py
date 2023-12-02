@@ -54,12 +54,27 @@ sh_version_files = glob.glob("sh_vers*", root_dir=PATH)
 # print(sh_version_files)
 
 def parse_sh_version(data):
+    """Функция обрабатывает вывод команды sh version, отбирая нужные данные
+
+    Args:
+        data (str): Строка-вывод команды sh version
+
+    Returns:
+        tuple: Кортеж с нужными данными
+    """
     regex = r"Version (?P<ver>\S+?),.+uptime is (?P<upt>.+?)\n.+?\"(?P<img>.+?)\""
     rmatch = re.finditer(regex, data, re.DOTALL)
     for m in rmatch:
         return m.group("ver", "img", "upt")
     
 def write_inventory_to_csv(data_filenames, csv_filename):
+    """Функция получает на вход список файлов, содержащих вывод команды sh version.
+    Определенные данные из передаваемых файлов записываются в результирующий CSV-файл.
+
+    Args:
+        data_filenames (list): Список файлов для обработки
+        csv_filename (str): Имя CSV-файла с результирующими данными
+    """
     headers_flag = False
     headers = ["hostname", "ios", "image", "uptime"]
     for file in data_filenames:

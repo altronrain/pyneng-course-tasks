@@ -44,3 +44,37 @@ In [10]: with open("sh_cdp_n_r2.txt") as f:
         'Eth 0/1': {'R5': 'Eth 0/0'},
         'Eth 0/2': {'R6': 'Eth 0/1'}}}
 """
+import re
+import os
+from pprint import pprint
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/17_serialization"
+
+def parse_sh_cdp_neighbors(command_output):
+    """Функция обрабатывает вывод команды sh cdp n и на основе полученных данных
+    формирует словарь определенного формата.
+    Формат словаря:
+        {local_hostname : {local_port : {remote_hostname: remote port}}}
+
+    Args:
+        command_output (str): Вывод команды sh cdp n
+
+    Returns:
+        dict: Словарь с данными о связности сети
+    """
+    port_map_dict = {}  
+    regex = r"^(\S+)>|^(\w{2,3}) +(\S+ \S+).+?(\S+ \S+)$"
+    rmatch = re.finditer(regex, command_output, re.MULTILINE)
+    for m in rmatch:
+        if m.group(1) is not None:
+            hostname = m.group(1)
+            port_map_dict[hostname] = {}
+        else:
+            port_map_dict[hostname].update({m.group(3): {m.group(2): m.group(4)}})
+    return port_map_dict
+    
+
+
+if __name__ == "__main__":
+    with open(os.path.join(PATH, "sh_cdp_n_r1.txt")) as f:
+        pprint(parse_sh_cdp_neighbors(f.read()), sort_dicts=False)
