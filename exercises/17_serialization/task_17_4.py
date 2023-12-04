@@ -40,8 +40,12 @@ C-3PO,c3po@gmail.com,16/12/2019 17:24
 Функции convert_str_to_datetime и convert_datetime_to_str использовать не обязательно.
 
 """
-
+import os
+import csv
 import datetime
+from pprint import pprint
+
+PATH = "/home/altron/Documents/repos/pyneng-course-tasks/exercises/17_serialization"
 
 
 def convert_str_to_datetime(datetime_str):
@@ -56,3 +60,38 @@ def convert_datetime_to_str(datetime_obj):
     Конвертирует объект datetime в строку с датой в формате 11/10/2019 14:05
     """
     return datetime.datetime.strftime(datetime_obj, "%d/%m/%Y %H:%M")
+
+
+def write_last_log_to_csv(source_log, output):
+    """Функция получает на вход записи журнала с изменениями имен пользователей.
+    Из всех представленных записей отбираются уникальные и актуальные.
+    По завершении работы данные записываются в файл формата CSV
+
+    Args:
+        source_log (str): Имя CSV-файла с исходными данными
+        output (str): Имя результирующего CSV-файла
+    """
+    with open(os.path.join(PATH, source_log)) as f:
+        data = csv.DictReader(f)
+        result_data = []
+        for row in data:
+            row['Last Changed'] = convert_str_to_datetime(row['Last Changed'])
+            result_data.append(row)
+            
+    result_data = sorted(result_data, key=lambda d: d['Last Changed'])
+    # pprint(result_data)
+    result_data.reverse()
+    uniq_mail_list = set()
+    with open(os.path.join(PATH, output), 'w') as of:
+        fieldnames = ['Name', 'Email', 'Last Changed']
+        wr = csv.DictWriter(of, fieldnames)
+        wr.writeheader()
+        for item in result_data:
+            if item['Email'] not in uniq_mail_list:
+                uniq_mail_list.add(item['Email'])
+                item['Last Changed'] = convert_datetime_to_str(item['Last Changed'])
+                wr.writerow(item)
+                
+
+if __name__ == "__main__":
+    write_last_log_to_csv("mail_log.csv", "output.csv")
