@@ -21,11 +21,21 @@
 параметры в файле devices.yaml.
 """
 import yaml
+from pathlib import Path
+from netmiko import Netmiko
+
+p = Path('exercises/18_ssh_telnet')
+
+
+def send_show_command(device, command):
+    with Netmiko(**device) as cssh:
+        output = cssh.send_command(command)
+    return output
 
 
 if __name__ == "__main__":
     command = "sh ip int br"
-    with open("devices.yaml") as f:
+    with open(p/"devices.yaml") as f:
         devices = yaml.safe_load(f)
 
     for dev in devices:

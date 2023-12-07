@@ -81,9 +81,48 @@ R1(config)#a
 Если параметры подключения к вашим устройствам отличаются, надо изменить
 параметры в файле devices.yaml.
 """
+import yaml
+import re
+from pathlib import Path
+from netmiko import Netmiko
+from pprint import pprint
+from paramiko.ssh_exception import SSHException
+from netmiko import NetmikoBaseException
 
+p = Path('exercises/18_ssh_telnet')
 # списки команд с ошибками и без:
 commands_with_errors = ["logging 0255.255.1", "logging", "a"]
 correct_commands = ["logging buffered 20010", "ip http server"]
 
 commands = commands_with_errors + correct_commands
+
+
+def send_config_commands(device, config_commands, log=True):
+    good_cmds = {}
+    bad_cmds = {}
+    try:
+        if log:
+            print(f'Подключаюсь к {device["host"]}...')
+        with Netmiko(**device) as cssh:
+            cssh.enable()
+            for cmd in config_commands:
+                output = cssh.send_config_set(cmd)
+                if '%' in output:
+                    bad_cmds.update({cmd: output})
+                    regex = r"% (.+)\n"
+                    rmatch = re.search(regex, output)
+                    print(f'Команда {cmd} выполнилась с ошибкой {rmatch.group(1)} на устройстве {device["host"]}')
+                else:
+                    good_cmds.update({cmd: output})
+        return good_cmds, bad_cmds
+    except (SSHException, NetmikoBaseException) as error:
+            print(f'{error}')
+
+
+if __name__ == "__main__":
+    command = "sh ip int br"
+    with open(p/"devices.yaml") as f:
+        devices = yaml.safe_load(f)
+
+    for dev in devices:
+        pprint(send_config_commands(dev, commands))

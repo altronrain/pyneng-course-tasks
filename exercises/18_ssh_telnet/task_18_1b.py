@@ -16,3 +16,28 @@
 Если параметры подключения к вашим устройствам отличаются, надо изменить
 параметры в файле devices.yaml.
 """
+import yaml
+from pathlib import Path
+from netmiko import Netmiko
+from paramiko.ssh_exception import SSHException
+from netmiko import NetmikoBaseException
+
+p = Path('exercises/18_ssh_telnet')
+
+
+def send_show_command(device, command):
+    try:
+        with Netmiko(**device) as cssh:
+            output = cssh.send_command(command)
+            return output
+    except (SSHException, NetmikoBaseException) as error:
+            print(f'{error}')
+
+
+if __name__ == "__main__":
+    command = "sh ip int br"
+    with open(p/"devices.yaml") as f:
+        devices = yaml.safe_load(f)
+
+    for dev in devices:
+        print(send_show_command(dev, command))

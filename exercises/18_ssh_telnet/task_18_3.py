@@ -51,6 +51,36 @@ Out[16]: 'config term\nEnter configuration commands, one per line.  End with CNT
 Если параметры подключения к вашим устройствам отличаются, надо изменить
 параметры в файле devices.yaml.
 """
+from pathlib import Path
+from netmiko import Netmiko
+from pprint import pprint
+from task_18_1 import send_show_command
+from task_18_2 import send_config_commands
+
+p = Path('exercises/18_ssh_telnet')
 
 commands = ["logging 10.255.255.1", "logging buffered 20010", "no logging console"]
 command = "sh ip int br"
+
+def send_commands(device, *, show=None, config=None):
+    if show  and config:
+        raise ValueError('Переданы оба типа аргументов')
+    elif config:
+        return send_config_commands(device, config)
+    elif show:
+        return send_show_command(device, show)
+    elif not show and not config:
+        raise ValueError('Не было передано ни одной команды')
+
+
+if __name__ == "__main__": 
+    r1 = {
+        'device_type': 'cisco_ios',
+        'host': '192.168.139.1',
+        'username': 'cisco',
+        'password': 'cisco',
+        'secret': 'cisco',
+        'timeout': '10'
+        }
+    
+    print(send_commands(r1, show=command))
