@@ -43,11 +43,62 @@ router ospf 1
 Если параметры подключения к вашим устройствам отличаются, надо изменить
 параметры в файле devices.yaml.
 """
+import yaml
+from pathlib import Path
+from netmiko import Netmiko
+from itertools import repeat
+from concurrent.futures import ThreadPoolExecutor
 
-# Этот словарь нужен только для проверки работа кода, в нем можно менять IP-адреса
-# тест берет адреса из файла devices.yaml
-commands = {
-    "192.168.100.3": "sh run | s ^router ospf",
-    "192.168.100.1": "sh ip int br",
-    "192.168.100.2": "sh int desc",
-}
+p = Path('exercises/19_concurrent_connections')
+
+
+def send_show_command(device, command):
+    """Функция выполняет переданную команду на удаленном устройстве
+
+    Args:
+        device (dict): Словарь с параметрами подключения к устройству
+        command (str): Команда для выполнения
+
+    Returns:
+        str: Вывод команды, включая приглашение на ввод
+    """
+    with Netmiko(**device) as cssh:
+        cssh.enable()
+        output = cssh.send_command(command, strip_command=False)
+        hostname = cssh.find_prompt()
+    return ''.join([hostname, output])
+
+
+def send_command_to_devices(devices, commands_dict, filename, limit=3):
+    """Функция выполняет переданные команды на указанных устройствах.
+    Результат выполнения команды записывается в файл.
+
+    Args:
+        devices (list): Список устройств для обработки
+        commands_dict (dict): Словарь команд для выполнения на устройствах
+        filename (str): Имя файла для записи результатов
+        limit (int, optional): Количество потоков для вычислений. Defaults to 3.
+    """
+    with ThreadPoolExecutor(max_workers=limit) as ex:
+        task_queue = []
+        for device in devices:
+            host = device['host']
+            task = ex.submit(send_show_command, device, commands_dict[host])
+            task_queue.append(task)
+    with open(p/filename, 'a') as f:
+        for task in task_queue:
+            f.write(f'{task.result()}\n')
+
+
+if __name__ == "__main__":
+    # Этот словарь нужен только для проверки работа кода, в нем можно менять IP-адреса
+    # тест берет адреса из файла devices.yaml
+    commands = {
+        "192.168.139.3": "sh run | s ^router ospf",
+        "192.168.139.1": "sh ip int br",
+        "192.168.139.2": "sh int desc",
+    }
+    with open(p/"devices.yaml") as f:
+        devices = yaml.safe_load(f)
+    send_command_to_devices(devices, commands, 'output2.txt')
+    

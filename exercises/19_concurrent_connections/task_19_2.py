@@ -40,3 +40,53 @@ Ethernet0/1                unassigned      YES NVRAM  administratively down down
 Если параметры подключения к вашим устройствам отличаются, надо изменить
 параметры в файле devices.yaml.
 """
+import yaml
+from pathlib import Path
+from netmiko import Netmiko
+from itertools import repeat
+from concurrent.futures import ThreadPoolExecutor
+
+p = Path('exercises/19_concurrent_connections')
+
+
+def send_show_command(device, command):
+    """Функция выполняет переданную команду на удаленном устройстве
+
+    Args:
+        device (dict): Словарь с параметрами подключения к устройству
+        command (str): Команда для выполнения
+
+    Returns:
+        str: Вывод команды, включая приглашение на ввод
+    """
+    with Netmiko(**device) as cssh:
+        cssh.enable()
+        output = cssh.send_command(command, strip_command=False)
+        hostname = cssh.find_prompt()
+    return ''.join([hostname, output])
+
+
+def send_show_command_to_devices(devices, command, filename, limit=3):
+    """Функция выполняет переданную команду на группе устройств.
+    Результат выполнения команды записывается в файл.
+
+    Args:
+        devices (list): Список устройств для обработки
+        command (str): Команда для выполнения
+        filename (str): Имя файла для записи результатов
+        limit (int, optional): Количество потоков для вычислений. Defaults to 3.
+    """
+    with ThreadPoolExecutor(max_workers=limit) as ex:
+        result = ex.map(send_show_command, devices, repeat(command))
+    with open(p/filename, 'a') as f:
+        for item in result:
+            f.write(f'{item}\n')
+
+
+
+if __name__ == "__main__":
+    command = "sh ip int br"
+    filename = 'output.txt'
+    with open(p/"devices.yaml") as f:
+        devices = yaml.safe_load(f)
+    send_show_command_to_devices(devices, command, 'output.txt')
