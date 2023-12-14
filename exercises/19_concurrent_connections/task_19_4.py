@@ -109,3 +109,83 @@ R3#
 Если параметры подключения к вашим устройствам отличаются, надо изменить
 параметры в файле devices.yaml.
 """
+import yaml
+from pathlib import Path
+from netmiko import Netmiko
+from itertools import repeat
+from concurrent.futures import ThreadPoolExecutor
+
+p = Path('exercises/19_concurrent_connections')
+
+
+def send_show_command(device, command):
+    """Функция выполняет переданную show-команду на удаленном устройстве
+
+    Args:
+        device (dict): Словарь с параметрами подключения к устройству
+        command (str): Команда для выполнения
+
+    Returns:
+        str: Вывод команды, включая приглашение на ввод
+    """
+    with Netmiko(**device) as cssh:
+        cssh.enable()
+        output = cssh.send_command(command)
+        hostname = cssh.find_prompt()
+    return f"{hostname}{command}\n{output}\n"
+
+
+def send_config_commands(device, commands):
+    """Функция выполняет переданную config-команду на удаленном устройстве
+
+    Args:
+        device (dict): Словарь с параметрами подключения к устройству
+        command (str): Команда для выполнения
+
+    Returns:
+        str: Вывод команды, включая приглашение на ввод
+    """
+    with Netmiko(**device) as cssh:
+        cssh.enable()
+        output = cssh.send_config_set(commands, strip_command=False)
+        hostname = cssh.find_prompt()
+    return f"{hostname}{output}\n"
+
+
+def send_commands_to_devices(devices, filename, *, show=None, config=None, limit=3):
+    """Функция выполняет переданные команды на указанных устройствах.
+    Результат выполнения команды записывается в файл.
+
+    Args:
+        devices (list): Список устройств для обработки
+        commands_dict (dict): Словарь команд для выполнения на устройствах
+        filename (str): Имя файла для записи результатов
+        limit (int, optional): Количество потоков для вычислений. Defaults to 3.
+    """
+    with ThreadPoolExecutor(max_workers=limit) as ex:
+        task_queue = []
+        for device in devices:
+            if show  and config:
+                raise ValueError('Переданы оба типа аргументов')
+            elif config:
+                task = ex.submit(send_config_commands, device, config)
+                task_queue.append(task)
+            elif show:
+                task = ex.submit(send_show_command, device, show)  
+                task_queue.append(task)              
+            elif not show and not config:
+                raise ValueError('Не было передано ни одной команды')
+    with open(p/filename, 'a') as f:
+        for task in task_queue:
+            f.write(f'{task.result()}')
+
+
+if __name__ == "__main__":
+    # Этот словарь нужен только для проверки работа кода, в нем можно менять IP-адреса
+    # тест берет адреса из файла devices.yaml
+    commands = ['router ospf 55', 'network 0.0.0.0 255.255.255.255 area 0']
+    with open(p/"devices.yaml") as f:
+        devices = yaml.safe_load(f)
+    send_commands_to_devices(devices, 'result.txt', show='sh clock')
+    send_commands_to_devices(devices, 'result.txt', config='logging 10.5.5.5')
+    send_commands_to_devices(devices, 'result.txt', config=commands)
