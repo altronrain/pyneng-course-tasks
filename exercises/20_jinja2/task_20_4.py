@@ -32,3 +32,15 @@ interface Gi0/10
 Не копируйте код функции generate_config.
 
 """
+import yaml
+from pathlib import Path
+from task_20_1 import generate_config
+
+p = Path('exercises/20_jinja2')
+# так должен выглядеть вызов функции
+if __name__ == "__main__":
+    data_file = p/"data_files/add_vlan_to_switch.yaml"
+    template_file = p/"templates/add_vlan_to_switch.txt"
+    with open(data_file) as f:
+        data = yaml.safe_load(f)
+    print(generate_config(template_file, data))

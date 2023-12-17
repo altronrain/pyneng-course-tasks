@@ -55,3 +55,15 @@ interface Fa0/1.100
 interface Fa0/1.200
  ip ospf hello-interval 1
 """
+import yaml
+from pathlib import Path
+from task_20_1 import generate_config
+
+p = Path('exercises/20_jinja2')
+# так должен выглядеть вызов функции
+if __name__ == "__main__":
+    data_file = p/"data_files/ospf.yml"
+    template_file = p/"templates/ospf.txt"
+    with open(data_file) as f:
+        data = yaml.safe_load(f)
+    print(generate_config(template_file, data))
