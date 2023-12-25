@@ -38,3 +38,53 @@ In [17]: result = send_and_parse_show_command(
  {'address': '10.255.1.2', 'intf': 'Tunnel2', 'protocol': 'down', 'status': 'up'}]
 
 """
+# import os
+import yaml
+from pathlib import Path
+from netmiko import Netmiko
+from textfsm import clitable
+from pprint import pprint
+
+p = Path('exercises/21_textfsm')
+
+def send_and_parse_show_command(device_dict, command, templates_path, index='index'):
+    """Функция подключается к оборудованию, выполняет show команду.
+    Далее полученный вывод команды обрабатывается шаблонами TextFSM.
+    Возвращает список словарей на основе шаблона,
+    соответствующего выполненной комнде.
+
+    Args:
+        device_dict (dict): Словарь параметров подключения к оборудованию
+        command (str): Команда для выполнения на оборудовании
+        templates_path (str): Имя директории с файлами шаблонов
+        index (str, optional): Имя файла соответствия шаблонов. Defaults to 'index'.
+
+    Returns:
+        list: Список словарей с распарсенным содержимым вывода команды
+    """
+    # ~Красивый вариант (по результатам tips&tricks)
+    # if "NET_TEXTFSM" not in os.environ:
+    #     os.environ["NET_TEXTFSM"] = p/templates_path
+    # with Netmiko(**device_dict) as cssh:
+    #     output = cssh.send_command(
+    #         command,
+    #         use_textfsm=True,
+    #         )
+    # return output
+    with Netmiko(**device_dict) as cssh:
+        output = cssh.send_command(command)
+    cli = clitable.CliTable(index, p/templates_path)
+    cli.ParseCmd(output, {'Command': command})
+    headers = cli.header
+    dict_output = [dict(zip(headers, list(row))) for row in cli]
+    return dict_output        
+
+
+if __name__ == "__main__":
+    command = "sh ip int br"
+    with open(p/"devices.yaml") as f:
+        devices = yaml.safe_load(f)
+    result = send_and_parse_show_command(
+        devices[1], "sh ip int br", templates_path='templates'
+    )
+    pprint(result, width=120)

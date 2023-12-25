@@ -38,3 +38,33 @@
 Проверить работу функции на примере вывода команды sh ip int br
 и устройствах из devices.yaml.
 """
+import yaml
+from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
+from pprint import pprint
+from itertools import repeat
+from task_21_4 import send_and_parse_show_command
+
+p = Path('exercises/21_textfsm')
+
+def send_and_parse_command_parallel(devices, command, templates_path, limit=3):
+    node_data = {}
+    with ThreadPoolExecutor(max_workers=limit) as executor:
+        result = executor.map(
+            send_and_parse_show_command,
+            devices,
+            repeat(command),
+            repeat(templates_path))
+        for node, parsed_output in zip(devices, result):
+            node_data.update({node['host']: parsed_output}) 
+    return node_data
+
+
+if __name__ == "__main__":
+    command = "sh ip int br"
+    with open(p/"devices.yaml") as f:
+        devices = yaml.safe_load(f)
+    result = send_and_parse_command_parallel(
+        devices, "sh ip int br", templates_path='templates'
+    )
+    pprint(result, width=120)       

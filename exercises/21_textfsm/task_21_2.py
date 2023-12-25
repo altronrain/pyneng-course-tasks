@@ -15,3 +15,12 @@
 
 Проверить работу шаблона с помощью функции parse_command_output из задания 21.1.
 """
+from pathlib import Path
+from pprint import pprint
+from task_21_1 import parse_command_output
+
+p = Path('exercises/21_textfsm')
+
+if __name__ == "__main__":
+    with open(p/"output/sh_ip_dhcp_snooping.txt") as f:
+        pprint(parse_command_output(p/"templates/sh_ip_dhcp_snooping.template", f.read()))
