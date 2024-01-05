@@ -37,10 +37,42 @@ ErrorInCommand: При выполнении команды "sh ip br" на ус�
 Если параметры подключения к вашим устройствам отличаются, надо изменить
 параметры в файле devices.yaml.
 """
-
+import re
+from netmiko.cisco.cisco_ios import CiscoIosSSH
 
 class ErrorInCommand(Exception):
     """
     Исключение генерируется, если при выполнении команды на оборудовании,
     возникла ошибка.
     """
+
+class MyNetmiko(CiscoIosSSH):
+    def __init__(self, **device_params):
+        super().__init__(**device_params)
+        self.enable()
+        
+    def _check_error_in_command(self, command, output):
+        regex = r'((:?Invalid input detected|Incomplete command|Ambiguous command).+)\n*'
+        match_ = re.search(regex, output)
+        if match_:
+            raise ErrorInCommand(
+                f'При выполнении команды "{command}" на устройстве {self.host}'
+                f' возникла ошибка {match_.group()}'
+                                 )
+    
+    def send_command(self, command):
+        output = super().send_command(command)
+        self._check_error_in_command(command, output)
+        return output
+    
+if __name__ == "__main__":
+    device_params = {
+        "device_type": "cisco_ios",
+        "ip": "192.168.139.1",
+        "username": "cisco",
+        "password": "cisco",
+        "secret": "cisco",
+    }
+    r1 = MyNetmiko(**device_params)
+    print(r1.send_command('show ip br'))
+    # print(r1.send_command('a'))

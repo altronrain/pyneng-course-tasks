@@ -29,5 +29,23 @@ Out[4]: 'Interface                  IP-Address      OK? Method Status           
 Если параметры подключения к вашим устройствам отличаются, надо изменить
 параметры в файле devices.yaml.
 """
+from base_connect_class import BaseSSH
 
-device_params = {"device_type": "cisco_ios", "host": "192.168.139.1"}
+class CiscoSSH(BaseSSH):
+    def __init__(self, **device_params):
+        self._params_check_and_provide(device_params)    
+        super().__init__(**device_params)
+        self.ssh.enable()
+        
+    def _params_check_and_provide(self, device_params):
+        if 'username' not in device_params.keys():
+            device_params['username'] = input('Введите имя пользователя: ')
+        if 'password' not in device_params.keys():
+            device_params['password'] = input('Введите пароль: ')
+        if 'secret' not in device_params.keys():
+            device_params['secret'] = input('Введите пароль режима enable: ')
+
+if __name__ == "__main__":
+    device_params = {"device_type": "cisco_ios", "host": "192.168.139.1"}
+    r1 = CiscoSSH(**device_params)
+    print(r1.send_show_command('sh ip int br'))
