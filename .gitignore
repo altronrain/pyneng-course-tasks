@@ -133,4 +133,4 @@ dmypy.json
 .pyre/
 
 # Course answers
-exercises/**/answer_task*.py
+# exercises/**/answer_task*.py
